@@ -3,8 +3,10 @@ const chatForm = document.getElementById("chatForm");
 const userInput = document.getElementById("userInput");
 const chatWindow = document.getElementById("chatWindow");
 const sendBtn = document.getElementById("sendBtn");
+const latestQuestion = document.getElementById("latestQuestion");
 
-/* Cloudflare Worker URL */
+/* Cloudflare Worker URL — requests go here, NOT directly to OpenAI.
+   The worker adds the API key server-side so it's never exposed. */
 const workerUrl = "https://wispy-violet-c822.jessica-k-soohoo.workers.dev/";
 
 /* System prompt: keeps the chatbot focused on L'Oréal topics only */
@@ -16,14 +18,17 @@ You ONLY answer questions about:
 - Personalized L'Oréal product recommendations
 - General beauty-related topics (skin types, hair concerns, application tips)
 
+Remember details the user shares (like their name, skin type, or hair concerns) and use them naturally in later answers.
+
 If a user asks about anything unrelated to L'Oréal, beauty, or personal care — such as politics, coding, math, other brands, or general trivia — politely decline and steer the conversation back. For example: "I'm here to help with L'Oréal products and beauty routines! Is there anything beauty-related I can help you with?"
 
 Keep answers warm, concise, and helpful.`;
 
-/* Conversation history sent with every request so the AI has context */
+/* Conversation history sent with every request so the AI has context.
+   This is what enables multi-turn memory (names, past questions, etc.) */
 const messages = [{ role: "system", content: systemPrompt }];
 
-/* Helper: add a message to the chat window */
+/* Helper: add a message bubble to the chat window */
 function addMessage(text, sender) {
   const msg = document.createElement("div");
   msg.classList.add("msg", sender); // sender is "user" or "ai"
@@ -43,7 +48,10 @@ chatForm.addEventListener("submit", async (e) => {
   const text = userInput.value.trim();
   if (!text) return;
 
-  // Show the user's message and store it in history
+  // Show the latest question above the chat (resets each time)
+  latestQuestion.textContent = "You asked: " + text;
+
+  // Show the user's message bubble and store it in history
   addMessage(text, "user");
   messages.push({ role: "user", content: text });
 
@@ -61,6 +69,10 @@ chatForm.addEventListener("submit", async (e) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ messages }),
     });
+
+    if (!response.ok) {
+      throw new Error(`Request failed (${response.status})`);
+    }
 
     const data = await response.json();
 
@@ -81,4 +93,4 @@ chatForm.addEventListener("submit", async (e) => {
     sendBtn.disabled = false;
     userInput.focus();
   }
-});                     
+});
