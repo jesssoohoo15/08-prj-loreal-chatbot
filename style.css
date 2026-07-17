@@ -1,3 +1,11 @@
+/* —— L'Oréal brand palette —— */
+:root {
+  --loreal-black: #000000; /* Iconic black */
+  --loreal-white: #ffffff; /* Radiant white */
+  --loreal-red: #ff003b;   /* Passionate red */
+  --loreal-gold: #e3a535;  /* Eternal gold */
+}
+
 /* —— basic reset —— */
 * {
   box-sizing: border-box;
@@ -8,7 +16,8 @@
 /* —— body + fonts —— */
 body {
   font-family: "Montserrat", Arial, Helvetica, sans-serif;
-  color: #333;
+  color: var(--loreal-black);
+  background: var(--loreal-white);
   display: flex;
   justify-content: center;
 }
@@ -24,10 +33,25 @@ body {
   padding-top: 50px;
 }
 
+.brand-logo {
+  width: 180px;
+  max-width: 60%;
+  margin-bottom: 18px;
+}
+
 .site-title {
-  font-size: 22px;
-  font-weight: 500;
-  margin-bottom: 10px;
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.site-tagline {
+  font-family: "Playfair Display", Georgia, serif;
+  font-style: italic;
+  font-size: 16px;
+  color: var(--loreal-gold);
 }
 
 /* chat window */
@@ -37,12 +61,13 @@ body {
 
 .chat-window {
   height: 360px;
-  border: 1px solid #000;
+  border: 1px solid var(--loreal-black);
+  border-top: 4px solid var(--loreal-red);
   padding: 20px;
-  font-size: 18px;
+  font-size: 17px;
   line-height: 1.5;
   overflow-y: auto;
-  background: #fafafa;
+  background: var(--loreal-white);
   white-space: pre-line;
 }
 
@@ -53,11 +78,17 @@ body {
 }
 
 .msg.user {
-  color: #000;
+  color: var(--loreal-black);
+  font-weight: 500;
+  border-left: 3px solid var(--loreal-black);
+  padding-left: 12px;
 }
 
 .msg.ai {
-  color: #666666;
+  color: var(--loreal-black);
+  font-weight: 300;
+  border-left: 3px solid var(--loreal-gold);
+  padding-left: 12px;
 }
 
 /* input row */
@@ -70,19 +101,21 @@ body {
 .chat-form input {
   flex: 1;
   padding: 12px;
-  border: 1px solid #ccc;
-  font-size: 18px;
+  height: 48px;
+  border: 1px solid var(--loreal-black);
+  font-size: 17px;
+  font-family: inherit;
 }
 
 .chat-form input:focus {
-  outline: 2px solid #000;
+  outline: 2px solid var(--loreal-red);
   outline-offset: 2px;
 }
 
 .chat-form button {
   font-size: 18px;
-  background: #000;
-  color: #fff;
+  background: var(--loreal-black);
+  color: var(--loreal-white);
   border: none;
   padding: 12px;
   width: 48px;
@@ -99,12 +132,17 @@ body {
 }
 
 .chat-form button:hover {
-  background: #666666;
+  background: var(--loreal-red);
 }
 
 .chat-form button:focus {
-  outline: 2px solid #000;
+  outline: 2px solid var(--loreal-red);
   outline-offset: 2px;
+}
+
+.chat-form button:disabled {
+  background: #999;
+  cursor: wait;
 }
 
 /* visually hidden */
@@ -125,7 +163,7 @@ body {
   margin: 60px 0 40px;
   text-align: center;
   font-size: 14px;
-  color: #666;
+  color: var(--loreal-black);
 }
 
 .site-footer nav {
@@ -134,10 +172,13 @@ body {
 
 .site-footer a {
   margin: 0 8px;
-  color: #000;
+  color: var(--loreal-black);
   text-decoration: none;
+  border-bottom: 1px solid var(--loreal-gold);
+  padding-bottom: 2px;
 }
 
 .site-footer a:hover {
-  color: #666666;
+  color: var(--loreal-red);
+  border-bottom-color: var(--loreal-red);
 }
