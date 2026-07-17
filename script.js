@@ -4,8 +4,8 @@ const userInput = document.getElementById("userInput");
 const chatWindow = document.getElementById("chatWindow");
 const sendBtn = document.getElementById("sendBtn");
 
-/* OpenAI Chat Completions endpoint */
-const apiUrl = "https://api.openai.com/v1/chat/completions";
+/* Cloudflare Worker URL */
+const workerUrl = "https://wispy-violet-c822.jessica-k-soohoo.workers.dev/";
 
 /* System prompt: keeps the chatbot focused on L'Oréal topics only */
 const systemPrompt = `You are the L'Oréal Smart Product Advisor, a friendly and knowledgeable beauty assistant.
@@ -55,38 +55,30 @@ chatForm.addEventListener("submit", async (e) => {
   const thinking = addMessage("…", "ai");
 
   try {
-    const response = await fetch(apiUrl, {
+    // No API key here — the Cloudflare Worker adds it server-side
+    const response = await fetch(workerUrl, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${OPENAI_API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: "gpt-4o",
-        messages: messages,
-      }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ messages }),
     });
 
-    if (!response.ok) {
-      throw new Error(`Request failed with status ${response.status}`);
+    const data = await response.json();
+
+    // If OpenAI returned an error, show it so we know what's wrong
+    if (data.error) {
+      throw new Error(data.error.message);
     }
 
-    const data = await response.json();
     const reply = data.choices[0].message.content;
 
     thinking.textContent = reply;
     messages.push({ role: "assistant", content: reply });
   } catch (err) {
     console.error(err);
-    thinking.textContent =
-      "⚠️ Sorry, something went wrong. Please try again in a moment.";
+    thinking.textContent = "⚠️ " + err.message;
   } finally {
     userInput.disabled = false;
     sendBtn.disabled = false;
     userInput.focus();
   }
-});
-
-// Temporary local storage for your API key — do NOT commit this file!
-// Add "secrets.js" to your .gitignore.
-const OPENAI_API_KEY = "PASTE-YOUR-OPENAI-API-KEY-HERE";
+});                     
